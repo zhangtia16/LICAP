@@ -125,10 +125,7 @@ def main(args):
         features = features.cuda()
         labels = labels.cuda()    
 
-        # # cuda
-        # imp_node_coeff = imp_node_coeff.cuda() 
-          
-
+        # # cuda       
         # g = data[0]
         if args.gpu < 0:
             cuda = False
@@ -200,11 +197,8 @@ def main(args):
                 test_loss, test_ndcg, test_spm, test_overlap, test_medianAE = rank_evaluate(val_logits[test_idx], labels[test_idx].unsqueeze(-1), args.list_num, loss_fcn)
 
             if args.early_stop:
-                stop = stopper.step(-val_loss, epoch, model)    #验证集loss？
-                # if args.spm:
-                #     stop = stopper.step(val_spm, epoch, model)
-                # else:
-                #     stop = stopper.step(val_ndcg, epoch, model)
+                stop = stopper.step(-val_loss, epoch, model)   
+
                 if stop:
                     # print('best epoch :', stopper.best_epoch)
                     break
@@ -232,10 +226,6 @@ def main(args):
             _, test_ndcg_200, _, test_overlap_200, _  = \
                 rank_evaluate(test_logits[test_idx], labels[test_idx].unsqueeze(-1), 200, loss_fcn)
 
-            # print("Test NDCG {:.4f} | Test Loss {:.4f} | Test Spearman {:.4f} | Test Overlap {:.4f} | Best Epoch {}".format(test_ndcg_20, test_loss, test_spearman, test_overlap_20, stopper.best_epoch))
-            # print("Test NDCG {:.4f} | Test Loss {:.4f} | Test Spearman {:.4f} | Test Overlap {:.4f} | Best Epoch {}".format(test_ndcg_50, test_loss, test_spearman, test_overlap_50, stopper.best_epoch))
-            # print("Test NDCG {:.4f} | Test Loss {:.4f} | Test Spearman {:.4f} | Test Overlap {:.4f} | Best Epoch {}".format(test_ndcg, test_loss, test_spearman, test_overlap, stopper.best_epoch))
-            # print("Test NDCG {:.4f} | Test Loss {:.4f} | Test Spearman {:.4f} | Test Overlap {:.4f} | Best Epoch {}".format(test_ndcg_200, test_loss, test_spearman, test_overlap_200, stopper.best_epoch))
 
         ndcg_scores.append(test_ndcg)
         spearmans.append(test_spearman)
@@ -263,22 +253,6 @@ def main(args):
     overlaps_20 = np.array(overlaps_20)
     overlaps_50 = np.array(overlaps_50)
     overlaps_200 = np.array(overlaps_200)
-
-    # print()
-    # print('ndcg: {} {:.4f} {:.4f}'.format(ndcg_scores, ndcg_scores.mean(), np.std(ndcg_scores)))     
-    # print('spearmans: {} {:.4f} {:.4f}'.format(spearmans, spearmans.mean(), np.std(spearmans)))    
-    # print('RMSE: {} {:.4f} {:.4f}'.format(rmses, rmses.mean(), np.std(rmses)))    
-    # print('over: {} {:.4f} {:.4f}'.format(overlaps, overlaps.mean(), np.std(overlaps)))
-
-    # results = {'ndcg': ndcg_scores,
-    #            'spearman': spearmans,
-    #            'rmse': rmses,
-    #            'overlap': overlaps,
-    #            'args': vars(args)}
-
-    # result_path = save_root + args.save_path.replace('checkpoint.pt', '') + 'result.pk'
-    # os.makedirs(os.path.dirname(result_path), exist_ok=True)
-    # pk.dump(results, open(result_path, 'wb'))
 
     
     print()

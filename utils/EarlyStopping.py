@@ -1,3 +1,5 @@
+# This code is modified from https://github.com/GRAPH-0/RGTN-NIE
+
 import os
 import numpy as np
 import torch

@@ -1,3 +1,5 @@
+# This code is modified from https://github.com/GRAPH-0/RGTN-NIE
+
 import torch
 import scipy.stats
 from sklearn.metrics import f1_score, median_absolute_error

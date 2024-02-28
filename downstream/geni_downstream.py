@@ -26,7 +26,6 @@ import matplotlib.pyplot as plt
 
 def main(args):
     torch.set_num_threads(5) 
-    #wandb.init(project='RGTN', name='RGTN_TMDB_simpleMSELoss_k20', entity='tianyu1024')
 
     warnings.filterwarnings('ignore')
 
@@ -127,39 +126,6 @@ def main(args):
 
 
 
-        # print('Stage 1:Model Pretraining with LICAL')
-        # print('Loading before pretrained vectors')
-
-        # feat_save_root = '/workspace1/zty/pretrain_data'
-
-        # if args.pretrain_model == 'gat':
-        #     print('Pretrain from GAT')
-        #     feat_pretrained_path = feat_save_root + '/gat_pretrain/pretrain_feat/' + args.dataset + '_features_pretrained_lr' + str(args.lr) + 'r' + str(args.loss_eta2) + '_' + str(cross_id) + '.pkl'
-        #     features = pk.load(open(feat_pretrained_path, 'rb'))
-
-        # elif args.pretrain_model == 'relgat':
-        #     print('Pretrain from RELGAT')
-        #     feat_pretrained_path = feat_save_root + '/pregat_pretrain_feat/' + args.dataset + '_relgat_features_pretrained_lr' + str(args.lr) + 'r' + str(args.loss_eta2) + '_' + str(cross_id) + '.pkl'
-        #     print(feat_pretrained_path)
-        #     features = pk.load(open(feat_pretrained_path, 'rb'))
-
-        # elif args.pretrain_model == 'relgat-loss1':
-        #     print('Pretrain from RELGAT-loss')
-        #     feat_pretrained_path = feat_save_root + '/pregat_pretrain_loss/' + args.dataset + '_relgat_features_pretrained_lr' + str(args.lr) + 'l1' +'_' + str(cross_id) + '.pkl'
-        #     print(feat_pretrained_path)
-        #     features = pk.load(open(feat_pretrained_path, 'rb'))
-
-        # elif args.pretrain_model == 'relgat-loss2':
-        #     print('Pretrain from RELGAT-loss')
-        #     feat_pretrained_path = feat_save_root + '/pregat_pretrain_loss/' + args.dataset + '_relgat_features_pretrained_lr' + str(args.lr) + 'l2' +'_' + str(cross_id) + '.pkl'
-        #     print(feat_pretrained_path)
-        #     features = pk.load(open(feat_pretrained_path, 'rb'))
-
-        # elif args.pretrain_model == 'null':
-        #     print('Pretrain from null')
-        #     pass
-        # else:
-        #     print('Error:pretrain model no existing!')
         
 
 
@@ -170,9 +136,6 @@ def main(args):
         labels = labels.cuda()
 
         # # cuda
-        # imp_node_coeff = imp_node_coeff.cuda() 
-          
-
         if args.gpu < 0:
             cuda = False
         else:
@@ -195,7 +158,6 @@ def main(args):
 
 
 
-        #print('Stage 2: Model Training with Pretrained Vectors')
         # create model
         heads = ([args.num_heads] * args.num_layers) + [args.num_out_heads]
         model = GENI(g,
@@ -253,11 +215,7 @@ def main(args):
                 test_loss, test_ndcg, test_spm, test_overlap, test_medianAE = rank_evaluate(val_logits[test_idx], labels[test_idx].unsqueeze(-1), args.list_num, loss_fcn)
 
             if args.early_stop:
-                stop = stopper.step(-val_loss, epoch, model)    #验证集loss？
-                # if args.spm:
-                #     stop = stopper.step(val_spm, epoch, model)
-                # else:
-                #     stop = stopper.step(val_ndcg, epoch, model)
+                stop = stopper.step(-val_loss, epoch, model)   
 
                 if stop:
                     # print('best epoch :', stopper.best_epoch)
@@ -285,10 +243,6 @@ def main(args):
             _, test_ndcg_200, _, test_overlap_200, _ = \
                 rank_evaluate(test_logits[test_idx], labels[test_idx].unsqueeze(-1), 200, loss_fcn)
 
-            # print("Test NDCG {:.4f} | Test Loss {:.4f} | Test Spearman {:.4f} | Test Overlap {:.4f} | Best Epoch {}".format(test_ndcg_20, test_loss, test_spearman, test_overlap_20, stopper.best_epoch))
-            # print("Test NDCG {:.4f} | Test Loss {:.4f} | Test Spearman {:.4f} | Test Overlap {:.4f} | Best Epoch {}".format(test_ndcg_50, test_loss, test_spearman, test_overlap_50, stopper.best_epoch))
-            # print("Test NDCG {:.4f} | Test Loss {:.4f} | Test Spearman {:.4f} | Test Overlap {:.4f} | Best Epoch {}".format(test_ndcg, test_loss, test_spearman, test_overlap, stopper.best_epoch))
-            # print("Test NDCG {:.4f} | Test Loss {:.4f} | Test Spearman {:.4f} | Test Overlap {:.4f} | Best Epoch {}".format(test_ndcg_200, test_loss, test_spearman, test_overlap_200, stopper.best_epoch))
 
         ndcg_scores.append(test_ndcg)
         spearmans.append(test_spearman)
@@ -306,27 +260,6 @@ def main(args):
 
 
 
-        # # case study
-        # truth = labels[test_idx]
-        # pred = test_logits[test_idx].squeeze(-1)
-
-        # top10_value, top10_indices = torch.topk(truth, 10)
-        # print('top10_value',top10_value)
-        # print('top10_indices',top10_indices)
-        # print(pred)
-        # for idx in top10_indices:
-        #     print(idx)
-        #     for i in range(1,len(test_idx)):
-        #         _ , topi_indices = torch.topk(pred, i)
-        #         # print(topi_indices)
-        #         if idx in topi_indices or i == 1000:
-        #             print(i)
-        #             break
-
-
-
-        
-
 
 
 
@@ -343,21 +276,7 @@ def main(args):
     overlaps_50 = np.array(overlaps_50)
     overlaps_200 = np.array(overlaps_200)
 
-    # print()
-    # print('ndcg: {} {:.4f} {:.4f}'.format(ndcg_scores, ndcg_scores.mean(), np.std(ndcg_scores)))     
-    # print('spearmans: {} {:.4f} {:.4f}'.format(spearmans, spearmans.mean(), np.std(spearmans)))    
-    # print('RMSE: {} {:.4f} {:.4f}'.format(rmses, rmses.mean(), np.std(rmses)))    
-    # print('over: {} {:.4f} {:.4f}'.format(overlaps, overlaps.mean(), np.std(overlaps)))
 
-    # results = {'ndcg': ndcg_scores,
-    #            'spearman': spearmans,
-    #            'rmse': rmses,
-    #            'overlap': overlaps,
-    #            'args': vars(args)}
-
-    # result_path = save_root + args.save_path.replace('checkpoint.pt', '') + 'result.pk'
-    # os.makedirs(os.path.dirname(result_path), exist_ok=True)
-    # pk.dump(results, open(result_path, 'wb'))
 
 
     print()

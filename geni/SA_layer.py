@@ -1,3 +1,5 @@
+# This code is modified from https://github.com/GRAPH-0/RGTN-NIE
+
 import torch as th
 from torch import nn
 

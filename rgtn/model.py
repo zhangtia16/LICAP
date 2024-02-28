@@ -1,3 +1,5 @@
+# This code is modified from https://github.com/GRAPH-0/RGTN-NIE
+
 import os
 import sys
 curPath = os.path.abspath(os.path.dirname(__file__))

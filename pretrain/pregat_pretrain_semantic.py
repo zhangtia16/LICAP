@@ -179,13 +179,6 @@ def main(args):
                 print("Epoch {:05d} | Time(s) {:.4f} | Loss {:.4f} | loss_1 {:.4f} | loss_2 {:.4f}".format(epoch, np.mean(dur), loss.item(), loss_1.item(),loss_2.item()))
      
 
-        # if args.early_stop:
-        #     model.load_state_dict(torch.load(model_path,map_location='cpu'))
-        # test
-        # model.eval()
-        # with torch.no_grad():
-        #     features_pretrained, loss, loss_1, loss_2 = model(semantic_feat, edge_types, test_idx) 
-
         print()
 
         print(feat_pretrained_path)
@@ -219,13 +212,6 @@ if __name__ == '__main__':
                         help="number of hidden layers")
     parser.add_argument("--num-hidden", type=int, default=16,
                         help="number of hidden units")
-    # parser.add_argument("--residual", action="store_true", default=False,
-    #                     help="use residual connection")
-    # parser.add_argument("--feat-drop", type=float, default=0.)
-    # parser.add_argument("--in-drop", type=float, default=.3,
-    #                     help="input feature dropout")
-    # parser.add_argument("--attn-drop", type=float, default=.3,
-    #                     help="attention dropout")
     parser.add_argument("--lr", type=float, default=0.005,
                         help="learning rate")
     parser.add_argument('--weight-decay', type=float, default=5e-4,

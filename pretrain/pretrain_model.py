@@ -114,4 +114,3 @@ class Predicate_GAT(nn.Module):
 
         return h, loss, loss_1, loss_2
 
-# batch-version

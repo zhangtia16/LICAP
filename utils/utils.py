@@ -1,4 +1,4 @@
-# the following is modified from https://github.com/GRAPH-0/RGTN-NIE
+# This code is modified from https://github.com/GRAPH-0/RGTN-NIE
 import dgl
 import numpy as np
 import pickle

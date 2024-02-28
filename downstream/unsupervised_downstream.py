@@ -96,10 +96,6 @@ def main(args):
         _, test_ndcg_200, _, test_overlap_200, _  = \
                 rank_evaluate(pred, labels[test_idx], 200, loss_fcn)
 
-        # print("Test NDCG {:.4f} | Test Loss {:.4f} | Test Spearman {:.4f} | Test Overlap {:.4f}".format(test_ndcg_20, test_loss, test_spearman, test_overlap_20))
-        # print("Test NDCG {:.4f} | Test Loss {:.4f} | Test Spearman {:.4f} | Test Overlap {:.4f}".format(test_ndcg_50, test_loss, test_spearman, test_overlap_50))
-        # print("Test NDCG {:.4f} | Test Loss {:.4f} | Test Spearman {:.4f} | Test Overlap {:.4f}".format(test_ndcg, test_loss, test_spearman, test_overlap))
-        # print("Test NDCG {:.4f} | Test Loss {:.4f} | Test Spearman {:.4f} | Test Overlap {:.4f}".format(test_ndcg_200, test_loss, test_spearman, test_overlap_200))
 
         ndcg_scores.append(test_ndcg)
         spearmans.append(test_spearman)
