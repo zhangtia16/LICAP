@@ -14,4 +14,5 @@ If you find this work is useful, please consider the following citation.
   pages={1-15}
 }
 ```
-paper link: https://ieeexplore.ieee.org/document/10443036
+TNNLS paper link: https://ieeexplore.ieee.org/document/10443036 \
+arXiv paper link: https://arxiv.org/pdf/2402.17791.pdf
