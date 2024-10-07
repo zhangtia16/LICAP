@@ -50,9 +50,9 @@ def main(args):
         os.makedirs(save_root)
 
     for cross_id in range(args.cross_num):
-        # print('-------------------------------------')
-        # print('Cross:{}'.format(cross_id))
-        # print('------Dataset Loading')
+        print('-------------------------------------')
+        print('Cross:{}'.format(cross_id))
+        print('------Dataset Loading')
 
         
         g, edge_types, _, rel_num, struct_feat, semantic_feat, labels, train_idx, val_idx, test_idx = \
@@ -60,69 +60,49 @@ def main(args):
         
 
         # load pretrain data
-        feat_save_root = '/workspace1/zty/pretrain_data'
-
+        feat_save_root = 'pretrain/ckpt/'
         dataset_name = args.dataset.rstrip('_two').rstrip('_rel').lower()
-        struct_pretrain_data_root = '/workspace1/zty/pretrain_data/pregat_pretrain_struct/'
-        semantic_pretrain_data_root = '/workspace1/zty/pretrain_data/pregat_pretrain_semantic/'
-        
-
+        struct_pretrain_data_root = feat_save_root + '/pregat_pretrain_struct/'
+        semantic_pretrain_data_root = feat_save_root + 'pregat_pretrain_semantic/'
         imp_ratio_path = 'imp_ratio_'+ str(args.important_ratio) + '/'
         pretrain_patience_path = 'patience_'+ str(args.pretrain_patience) + '/'
         dataset_path = dataset_name + '/'
 
-        
         struct_root =  struct_pretrain_data_root + imp_ratio_path + pretrain_patience_path + dataset_path
         semantic_root =  semantic_pretrain_data_root + imp_ratio_path + pretrain_patience_path + dataset_path
 
         suffix = str(args.lr) + 'r' + str(args.loss_eta2) + '_' + str(cross_id) + '.pkl'
 
 
-        if args.pretrain_model == 'gat_struct':
-            print('Pretrain from GAT_struct')
-            # feat_pretrained_path = '/workspace1/zty/pretrain/gat_pretrain/pretrain_feat/' + args.dataset.strip('_two') + '_features_pretrained_lr' + suffix
-            # struct_feat = pk.load(open(feat_pretrained_path, 'rb'))
-        
-        elif args.pretrain_model == 'gat_semantic':
-            semantic_root = '/workspace1/zty/pretrain_data/gat_pretrain_semantic/' + imp_ratio_path + pretrain_patience_path + dataset_path
-
-            if dataset_name == 'ga16k':
-                feat_pretrained_path = semantic_root + dataset_name + '_semantic_gat_pretrained_lr' + suffix
-            else: 
-                feat_pretrained_path = semantic_root + dataset_name + '_semantic_gat_pretrained_lr' + suffix.rstrip('.pkl') + '_loss.pkl' 
-            
-            semantic_feat = pk.load(open(feat_pretrained_path, 'rb'))
-            
-
-        elif args.pretrain_model == 'pregat_struct':
+        if args.pretrain_model == 'pregat_struct':
             feat_pretrained_path = struct_root + dataset_name + '_struct_pregat_pretrained_lr' + suffix
-            
             struct_feat = pk.load(open(feat_pretrained_path, 'rb'))
 
         elif args.pretrain_model == 'pregat_semantic':
             feat_pretrained_path = semantic_root + dataset_name + '_semantic_pregat_pretrained_lr' + suffix
-            #print(feat_pretrained_path)
+            
             semantic_feat = pk.load(open(feat_pretrained_path, 'rb'))
             
         
         elif args.pretrain_model == 'pregat_both':
-            struct_feat_pretrained_path = struct_root + dataset_name + '_struct_pregat_pretrained_lr' + suffix
-            print(struct_feat_pretrained_path)
+            struct_feat_pretrained_path = struct_root + dataset_name + '_struct_pregat_pretrained_lr' + suffix 
             struct_feat = pk.load(open(struct_feat_pretrained_path, 'rb'))
 
             semantic_feat_pretrained_path = semantic_root + dataset_name + '_semantic_pregat_pretrained_lr' + suffix
-            print(semantic_feat_pretrained_path)
             semantic_feat = pk.load(open(semantic_feat_pretrained_path, 'rb'))
 
-            feat_pretrained_path = struct_feat_pretrained_path + '||' + semantic_feat_pretrained_path
+            feat_pretrained_path = struct_feat_pretrained_path + '\n' + semantic_feat_pretrained_path
+
 
         elif args.pretrain_model == 'null':
             print('Pretrain from null')
             feat_pretrained_path = 'null'
-            pass
+            
         else:
             print('Error:pretrain model no existing!')
-    
+
+        print('Pretrained Model:{}'.format(args.pretrain_model))
+        print('Loading Path:{}'.format(feat_pretrained_path))
 
         # cuda
         torch.cuda.set_device(args.gpu)
@@ -339,11 +319,11 @@ if __name__ == '__main__':
     parser.add_argument("--feat-drop", type=float, default=0.)
 
 
-    #######
+    # hyper-params
     parser.add_argument('--loss-eta1', type=float, default=1.0)
     parser.add_argument('--loss-eta2', type=float, default=1.0)
     parser.add_argument('--important-ratio', type=float, default=0.1)
-    parser.add_argument('--pretrain-model', type=str, default='pregat')
+    parser.add_argument('--pretrain-model', type=str, default='pregat_struct')
     parser.add_argument('--pretrain-patience', type=int, default=20)
  
     args = parser.parse_args()

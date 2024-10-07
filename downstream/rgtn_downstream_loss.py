@@ -62,7 +62,7 @@ def main(args):
         # load pretrain data
 
         dataset_name = args.dataset.rstrip('_two').rstrip('_rel').lower()
-        pretrain_data_root = '/workspace1/zty/pretrain_data/pregat_pretrain_semantic_loss/'
+        pretrain_data_root = 'pretrain/ckptpregat_pretrain_semantic_loss/'
         
 
         imp_ratio_path = 'imp_ratio_'+ str(args.important_ratio) + '/'

@@ -32,12 +32,12 @@ def main(args):
     print(args.save_path)
     # set the save path
     dataset_name = args.dataset.rstrip('_two').rstrip('_rel').lower()
-    save_root = 'pretrain/results/' + dataset_name + '_pregat_pretrain_semantic/'
+    save_root = 'pretrain/results/' + dataset_name + '_pregat_semantic/'
     if not os.path.exists(save_root):
         os.makedirs(save_root)
     
 
-    pretrain_data_root = '/workspace1/zty/pretrain_data/pregat_pretrain_semantic/'
+    pretrain_data_root = 'pretrain/ckpt/pregat_semantic/'
     imp_ratio_path = 'imp_ratio_'+ str(args.important_ratio) + '/'
     pretrain_patience_path = 'patience_'+ str(args.pretrain_patience) + '/'
     dataset_path = dataset_name + '/'
@@ -45,17 +45,6 @@ def main(args):
     if not os.path.exists(feat_save_root):
         os.makedirs(feat_save_root)
 
-
-    
-
-        # if args.loss_eta2 == 0 and args.loss_eta1 == 1:
-        #     loss_sign = 'l1'
-        # elif args.loss_eta2 == 1 and args.loss_eta1 == 0:
-        #     loss_sign = 'l2'
-        # else:
-        #     print('wrong input')
-
-        # feat_pretrained_path = 'pretrain/pretrain_loss/' + args.dataset + '_relgat_features_pretrained_lr' + str(args.lr) + loss_sign +'_' + str(cross_id) + '.pkl'
 
 
 
@@ -68,7 +57,7 @@ def main(args):
         g, edge_types, _, rel_num, struct_feat, semantic_feat, labels, train_idx, val_idx, test_idx = \
             load_data(args.data_path, args.dataset, cross_id)
 
-        ###
+        # find important nodes
         train_important_idx, train_normal_idx, important_ratio, normal_ratio, train_important_border, train_normal_border = \
             find_imp_idx(labels, train_idx, val_idx, test_idx, args.list_num, args.important_ratio, args.normal_important_ratio)
 
@@ -191,7 +180,7 @@ def main(args):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description='RELGAT-Pretrain')
+    parser = argparse.ArgumentParser(description='PreGAT-Pretrain')
     parser.add_argument("--dataset", type=str, default='GA16k_rel_two',
                         help="The input dataset.")
     parser.add_argument("--data_path", type=str, default='datasets/ga16k_rel.pk',
@@ -226,7 +215,7 @@ if __name__ == '__main__':
                         help="utilize centrality to scale scores")
     parser.add_argument('--pred-dim', type=int, default=10,
                         help="the size of predicate embedding vector")
-    parser.add_argument('--save-path', type=str, default='gat-two_checkpoint.pt',
+    parser.add_argument('--save-path', type=str, default='checkpoint.pt',
                         help='the path to save the best model')
 
     parser.add_argument('--loss-lambda', type=float, default=0.5,
@@ -234,7 +223,7 @@ if __name__ == '__main__':
     parser.add_argument('--list-num', type=int, default=100)
 
 
-    #######
+    # hyper-params
     parser.add_argument('--loss-eta1', type=float, default=1.0)
     parser.add_argument('--loss-eta2', type=float, default=1.0)
     parser.add_argument('--important-ratio', type=float, default=0.1)

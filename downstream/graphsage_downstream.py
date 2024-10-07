@@ -54,67 +54,49 @@ def main(args):
 
 
         # load pretrain data
-        feat_save_root = '/workspace1/zty/pretrain_data'
-
+        feat_save_root = 'pretrain/ckpt/'
         dataset_name = args.dataset.rstrip('_two').rstrip('_rel').lower()
-        struct_pretrain_data_root = '/workspace1/zty/pretrain_data/pregat_pretrain_struct/'
-        semantic_pretrain_data_root = '/workspace1/zty/pretrain_data/pregat_pretrain_semantic/'
-        
-
+        struct_pretrain_data_root = feat_save_root + '/pregat_pretrain_struct/'
+        semantic_pretrain_data_root = feat_save_root + 'pregat_pretrain_semantic/'
         imp_ratio_path = 'imp_ratio_'+ str(args.important_ratio) + '/'
         pretrain_patience_path = 'patience_'+ str(args.pretrain_patience) + '/'
         dataset_path = dataset_name + '/'
 
-        
         struct_root =  struct_pretrain_data_root + imp_ratio_path + pretrain_patience_path + dataset_path
         semantic_root =  semantic_pretrain_data_root + imp_ratio_path + pretrain_patience_path + dataset_path
 
         suffix = str(args.lr) + 'r' + str(args.loss_eta2) + '_' + str(cross_id) + '.pkl'
 
 
-        if args.pretrain_model == 'gat_struct':
-            print('Pretrain from GAT_struct')
-            # feat_pretrained_path = '/workspace1/zty/pretrain/gat_pretrain/pretrain_feat/' + args.dataset.strip('_two') + '_features_pretrained_lr' + suffix
-            # struct_feat = pk.load(open(feat_pretrained_path, 'rb'))
-            
-
-        elif args.pretrain_model == 'pregat_struct':
+        if args.pretrain_model == 'pregat_struct':
             feat_pretrained_path = struct_root + dataset_name + '_struct_pregat_pretrained_lr' + suffix
-            # print(feat_pretrained_path)
-            features = pk.load(open(feat_pretrained_path, 'rb'))
+            struct_feat = pk.load(open(feat_pretrained_path, 'rb'))
 
         elif args.pretrain_model == 'pregat_semantic':
             feat_pretrained_path = semantic_root + dataset_name + '_semantic_pregat_pretrained_lr' + suffix
-            #print(feat_pretrained_path)
-            features = pk.load(open(feat_pretrained_path, 'rb'))
+            
+            semantic_feat = pk.load(open(feat_pretrained_path, 'rb'))
             
         
-        elif args.pretrain_model == 'pregat_concat':
-            struct_feat_pretrained_path = struct_root + dataset_name + '_struct_pregat_pretrained_lr' + suffix
+        elif args.pretrain_model == 'pregat_both':
+            struct_feat_pretrained_path = struct_root + dataset_name + '_struct_pregat_pretrained_lr' + suffix 
             struct_feat = pk.load(open(struct_feat_pretrained_path, 'rb'))
 
             semantic_feat_pretrained_path = semantic_root + dataset_name + '_semantic_pregat_pretrained_lr' + suffix
             semantic_feat = pk.load(open(semantic_feat_pretrained_path, 'rb'))
 
-            features = torch.cat((struct_feat,semantic_feat),dim=1)
-            feat_pretrained_path = struct_feat_pretrained_path + '||' + semantic_feat_pretrained_path
-            print(features.shape)
+            feat_pretrained_path = struct_feat_pretrained_path + '\n' + semantic_feat_pretrained_path
 
-        elif args.pretrain_model == 'null_semantic':
-            #print('Pretrain from null_semantic')
-            feat_pretrained_path = 'null_semantic'
-            features = semantic_feat
-        elif args.pretrain_model == 'null_concat':
-            #print('Pretrain from null_concat')
-            feat_pretrained_path = 'null_concat'
-            features = torch.cat((struct_feat,semantic_feat),dim=1)
-            print(features.shape)
-        elif args.pretrain_model == 'null_struct':
-            #print('Pretrain from null_struct')
-            feat_pretrained_path = 'null_struct'
-            features = struct_feat
+
+        elif args.pretrain_model == 'null':
+            print('Pretrain from null')
+            feat_pretrained_path = 'null'
+            
         else:
             print('Error:pretrain model no existing!')
+
+        print('Pretrained Model:{}'.format(args.pretrain_model))
+        print('Loading Path:{}'.format(feat_pretrained_path))
         
 
         torch.cuda.set_device(args.gpu)
