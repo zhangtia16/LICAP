@@ -1,7 +1,51 @@
 # LICAP
-## Label Informed Contrastive Pre-training for Node Importance Estimation on Knowledge Graphs
+## Abstract
 
 Node Importance Estimation (NIE) is a task of inferring importance scores of the nodes in a graph. Due to the availability of richer data and knowledge, recent research interests of NIE have been dedicating to knowledge graphs for predicting future or missing node importance scores. Existing state-of-the-art NIE methods train the model by available labels, and they consider every interested node equally before training. However, the nodes with higher importance often require or receive more attention in real-world scenarios, e.g., people may care more about the movies or webpages with higher importance. To this end, we introduce Label Informed ContrAstive Pre-training (LICAP) to the NIE problem for being better aware of the nodes with high importance scores. Specifically, LICAP is a novel type of contrastive learning framework that aims to fully utilize the continuous labels to generate contrastive samples for pre-training embeddings. Considering the NIE problem, LICAP adopts a novel sampling strategy called top nodes preferred hierarchical sampling to first group all interested nodes into a top bin and a non-top bin based on node importance scores, and then divide the nodes within top bin into several finer bins also based on the scores. The contrastive samples are generated from those bins, and are then used to pretrain node embeddings of knowledge graphs via a newly proposed Predicate-aware Graph Attention Networks (PreGAT), so as to better separate the top nodes from non-top nodes, and distinguish the top nodes within top bin by keeping the relative order among finer bins. Extensive experiments demonstrate that the LICAP pretrained embeddings can further boost the performance of existing NIE methods and achieve the new state-of-the-art performance regarding both regression and ranking metrics.
+
+## Requirement
+```
+conda create -n licap python=3.7.13
+source activate licap
+cd LICAP
+pip install -r requirements.txt
+```
+
+## Dataset
+Our codes are based on RGTN. To obtain the datasets, please download them from this link: [RGTN GitHub Repository](https://github.com/GRAPH-0/RGTN-NIE) and place the relevant .pk files in the dataset path.
+
+For example, for the FB15K dataset, you should place `fb15k_rel.pk` and `fb_lang.pk` in the `LICAPdatasets` directory.
+
+
+## Pretrain
+To get the LICAP embeddings pretrained with the PreGAT from the intial structural embeddings, run the following codes
+```
+cd LICAP
+python pretrain/pregat_pretrain_struct.py --dataset TMDB_rel_two --data_path ./datasets/tmdb_rel.pk
+python pretrain/pregat_pretrain_struct.py --dataset FB15k_rel_two --data_path ./datasets/fb15k_rel.pk
+```
+
+To get the LICAP embeddings pretrained with the PreGAT from the intial semantic embeddings, run the following codes
+```
+cd LICAP
+python pretrain/pregat_pretrain_semantic.py --dataset TMDB_rel_two --data_path ./datasets/tmdb_rel.pk
+python pretrain/pregat_pretrain_semantic.py --dataset FB15k_rel_two --data_path ./datasets/fb15k_rel.pk
+```
+
+## Evaluation
+To evaluate the LICAP embeddings pretrained by PreGAT from the intial structural embeddings, run the following codes
+```
+cd LICAP
+python downstream/rgtn_downstream.py --dataset TMDB_rel_two --data_path ./datasets/tmdb_rel.pk --pretrain-model pregat_struct
+python downstream/rgtn_downstream.py --dataset FB15k_rel_two --data_path ./datasets/fb15k_rel.pk --pretrain-model pregat_struct
+```
+
+To evaluate the embeddings pretrained by PreGAT from the intial semantic embeddings, run the following codes
+```
+cd LICAP
+python downstream/rgtn_downstream.py --dataset TMDB_rel_two --data_path ./datasets/tmdb_rel.pk --pretrain-model pregat_semantic
+python downstream/rgtn_downstream.py --dataset FB15k_rel_two --data_path ./datasets/fb15k_rel.pk --pretrain-model pregat_semantic
+```
 
 ## Reference
 If you find this work is useful, please consider the following citation.
