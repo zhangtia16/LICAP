@@ -24,7 +24,7 @@ pip install -r requirements.txt
 ## Dataset
 Our codes are based on RGTN. To obtain the datasets, please download them from this link: [RGTN GitHub Repository](https://github.com/GRAPH-0/RGTN-NIE) and place the relevant .pk files in the dataset path.
 
-For example, for the FB15K dataset, you should place `fb15k_rel.pk` and `fb_lang.pk` in the `LICAPdatasets` directory.
+For example, for the FB15K dataset, you should place `fb15k_rel.pk` and `fb_lang.pk` in the `LICAP/datasets` directory.
 
 
 ## Pretrain
